@@ -5,84 +5,54 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class Paddle implements KeyListener{
+public class Paddle{
 
-	int player1y = 0;
-	int player2y = 0;
+	int y = 0;
 	int player;
 	boolean left;
 	Game game;
 	
-	public boolean[] keys = new boolean[68836];
-	public boolean w, s, up, down;
+	private Keys keys;
 	
 	public int paddleWidth = 25;
 	public int paddleHeight = 50;
+	public int speed = 5;
+	private int bumper = 80;
 	
-	public Paddle(Game game, int player, boolean left){
+	public Paddle(Game game, int player, boolean left, Keys keys){
 		this.left = left;
 		this.game = game;
 		this.player = player;
+		this.keys = keys;
 	}
 	
 	public void update(){
 		
-		w = keys[KeyEvent.VK_W];
-		s = keys[KeyEvent.VK_S];
-		up = keys[KeyEvent.VK_UP];
-		down = keys[KeyEvent.VK_DOWN];
-		
-		
 		if(player == 1){
-			if(w){
-				if(player1y>=0){
-					player1y--;
+			if(keys.w){
+				if(y>=0){
+					y-= speed;
 				}
 			}
 			
-			if(s){
+			if(keys.s){
 				System.out.println("this is a test");
-				if(player1y <= game.HEIGHT){
-					player1y++;
+				if(y <= game.HEIGHT-bumper){
+					y+= speed;
 				}
 			}
 		}else if(player == 2){
-			if(up){
-				if(player2y>=0){
-					player2y--;
+			if(keys.up){
+				if(y>=0){
+					y-= speed;
 				}
 			}
 			
-			if(down){
-				if(player2y< game.HEIGHT){
-					player2y++;
+			if(keys.down){
+				if(y< game.HEIGHT-bumper){
+					y+=speed;
 				}
 			}
 		}
-	}
-	
-	public void paint(Graphics g){
-		g.setColor(Color.white);
-		if(left){
-			g.fillRect(0, player1y, paddleWidth, paddleHeight);
-		}else{
-			g.fillRect(game.WIDTH-30, player2y, paddleWidth, paddleHeight);
-		}
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		keys[e.getKeyCode()] = true;
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		keys[e.getKeyCode()] = false;
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 }

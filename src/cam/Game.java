@@ -19,6 +19,7 @@ public class Game extends Canvas implements Runnable {
 	private Thread thread;
 	private Paddle player1;
 	private Paddle player2;
+	private Keys keys = new Keys();
 
 	public boolean running = false;
 
@@ -30,11 +31,10 @@ public class Game extends Canvas implements Runnable {
 		setMaximumSize(size);
 		setMinimumSize(size);
 		setPreferredSize(size);
+		addKeyListener(keys);
 		
-		player1 = new Paddle(this, 1, true);
-		player2 = new Paddle(this, 2, false);
-		//addKeyListener(player1);
-		addKeyListener(player2);
+		player1 = new Paddle(this, 1, true, keys);
+		player2 = new Paddle(this, 2, false, keys);
 		frame = new JFrame();
 		createFrame();
 	}
@@ -71,7 +71,7 @@ public class Game extends Canvas implements Runnable {
 				updates++;
 				delta--;
 			}
-			//render();
+			render();
 			frames++;
 			if ((System.currentTimeMillis() - timer) > 1) {
 				timer += 1000;
@@ -85,31 +85,26 @@ public class Game extends Canvas implements Runnable {
 
 	public void render() {
 		BufferStrategy bs = getBufferStrategy();
-
-		if (bs == null) {
+		if(bs == null){
 			createBufferStrategy(3);
+			return;
 		}
-		
-		setBackground(Color.BLACK);
-		Graphics g = getGraphics();
+		Graphics g = bs.getDrawGraphics();
+		g.setColor(Color.black);
+		g.fillRect(0, 0, WIDTH, HEIGHT);
 		g.setColor(Color.white);
-		g.fillRect(0, 0, 25, 50);
-
+		g.fillRect(0, player1.y, player1.paddleWidth, player1.paddleHeight);
+		g.fillRect(WIDTH-30, player2.y, player2.paddleWidth, player2.paddleHeight);
+		g.dispose();
+		bs.show();
 	}
 	
-	public void paint(Graphics g){
-		super.paint(g);
-		setBackground(Color.black);
-		player1.paint(g);
-		player2.paint(g);
-	}
-
+	
 	public void update() {
+		keys.update();
 		player1.update();
 		player2.update();
-		System.out.println(player2.down);
 	}
-
 	
 	public void createFrame() {
 		frame.setSize(WIDTH, HEIGHT);
@@ -118,6 +113,7 @@ public class Game extends Canvas implements Runnable {
 		frame.setResizable(false);
 		frame.setTitle("Pong 2.0");
 		frame.add(this);
+		frame.addKeyListener(keys);
 		frame.setVisible(true);
 
 		start();
